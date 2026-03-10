@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('loans', function (Blueprint $table) {
+            $table->id();
+            $table->string('borrower_name');
+            $table->string('borrower_email');
+            $table->string('book_title');
+            $table->date('borrowed_at')->nullable();
+            $table->date('due_date')->nullable();
+            $table->boolean('returned')->default(false);
+            $table->enum('status', ['active', 'returned', 'overdue'])->default('active');
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('loans');
+    }
+};
