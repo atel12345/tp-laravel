@@ -7,9 +7,20 @@ use Illuminate\Http\Request;
 
 class LoanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $loans = Loan::all();
+        $query = Loan::orderBy($request->get('sort_by', 'created_at'), $request->get('order', 'asc'));
+
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->borrower_name) {
+            $query->where('borrower_name', 'like', "%{$request->borrower_name}%");
+        }
+
+        $loans = $query->paginate($request->get('per_page', 10));
+
         return response()->json([
             'data'    => $loans,
             'message' => 'Loans retrieved successfully',
